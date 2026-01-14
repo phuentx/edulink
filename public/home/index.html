@@ -1347,9 +1347,23 @@ window.openPostView=pid=>{
     refreshIcons();
 };
 
-window.toggleMobileCommentDrawer=()=>document.querySelector('.discussion-panel')?.classList.toggle('open');
-window.closePostView=()=>{const o=document.getElementById('post-view-overlay'); o.classList.add('hidden'); o.classList.remove('flex'); document.body.classList.remove('reel-mode'); document.querySelector('.discussion-panel')?.classList.remove('open'); window.currentViewingPostId=window.replyingToCommentId=null; document.querySelector('#post-view-media-container video')?.pause()};
-window.doLogout=async()=>{ await signOut(auth); window.location.href="index.html" };
+window.toggleMobileCommentDrawer = () => 
+    document.querySelector('.discussion-panel')?.classList.toggle('open');
+
+window.closePostView = () => {
+    const o = document.getElementById('post-view-overlay'); 
+    o.classList.add('hidden'); 
+    o.classList.remove('flex'); 
+    document.body.classList.remove('reel-mode'); 
+    document.querySelector('.discussion-panel')?.classList.remove('open'); 
+    window.currentViewingPostId = window.replyingToCommentId = null; 
+    document.querySelector('#post-view-media-container video')?.pause();
+};
+
+window.doLogout = async () => { 
+    await auth.signOut(); 
+    window.location.href = "/login"; 
+};
 
 function renderCommentsInModal(pid){
     const p=posts.find(x=>x.id===pid); if(!p) return;
