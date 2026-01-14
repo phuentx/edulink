@@ -4,10 +4,6 @@
     {
       "source": "/",
       "destination": "/home"
-    },
-    {
-      "source": "/hi",
-      "destination": "/hi"
     }
   ]
 }
