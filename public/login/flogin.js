@@ -45,19 +45,15 @@ const authAvatar = document.getElementById("authAvatar");
 let isSignup = false;
 
 function openOverlay() {
-  if (overlay) {
-    overlay.classList.add("active");
-    document.body.style.overflow = "hidden";
-    isSignup = false;
-    updateUI();
-  }
+  overlay.classList.add("active");
+  document.body.style.overflow = "hidden";
+  isSignup = false;
+  updateUI();
 }
 
 function closeOverlay() {
-  if (overlay) {
-    overlay.classList.remove("active");
-    document.body.style.overflow = "auto";
-  }
+  overlay.classList.remove("active");
+  document.body.style.overflow = "auto";
 }
 
 if (getStartedBtn) getStartedBtn.onclick = openOverlay;
@@ -65,97 +61,83 @@ if (heroGetStartedBtn) heroGetStartedBtn.onclick = openOverlay;
 if (closeBtn) closeBtn.onclick = closeOverlay;
 
 // TOGGLE LOGIN / SIGNUP
-if (toggleAuthBtn) {
-  toggleAuthBtn.onclick = () => {
-    isSignup = !isSignup;
-    updateUI();
-  };
-}
+toggleAuthBtn.onclick = () => {
+  isSignup = !isSignup;
+  updateUI();
+};
 
 function updateUI() {
   if (isSignup) {
     authTitle.innerText = "Create Account";
     btnSubmit.innerText = "Sign Up";
-    toggleAuthBtn.innerHTML =
-      'Already have an account? <span>Log in</span>';
+    toggleAuthBtn.innerHTML = 'Already have an account? <span>Log in</span>';
     groupName.classList.remove("hidden");
-    authAvatar.src =
-      "https://api.dicebear.com/9.x/lorelei/svg?seed=NewUser&backgroundColor=transparent";
+    authAvatar.src = "https://api.dicebear.com/9.x/lorelei/svg?seed=NewUser&backgroundColor=transparent";
   } else {
     authTitle.innerText = "Welcome back";
     btnSubmit.innerText = "Log in";
-    toggleAuthBtn.innerHTML =
-      "Don't have an account? <span>Create one</span>";
+    toggleAuthBtn.innerHTML = "Don't have an account? <span>Create one</span>";
     groupName.classList.add("hidden");
-    authAvatar.src =
-      "https://api.dicebear.com/9.x/lorelei/svg?seed=User&backgroundColor=transparent";
+    authAvatar.src = "https://api.dicebear.com/9.x/lorelei/svg?seed=User&backgroundColor=transparent";
   }
 }
 
 // DYNAMIC AVATAR
-if (inputName) {
-  inputName.addEventListener("input", (e) => {
-    if (isSignup && e.target.value.length > 1) {
-      authAvatar.src = `https://api.dicebear.com/9.x/lorelei/svg?seed=${
-        e.target.value
-      }&backgroundColor=transparent`;
-    }
-  });
-}
+inputName.addEventListener("input", (e) => {
+  if (isSignup && e.target.value.length > 1) {
+    authAvatar.src = `https://api.dicebear.com/9.x/lorelei/svg?seed=${e.target.value}&backgroundColor=transparent`;
+  }
+});
 
 // HANDLE SUBMIT
-if (btnSubmit) {
-  btnSubmit.onclick = async () => {
-    const email = inputEmail.value.trim();
-    const pass = inputPass.value.trim();
-    const name = inputName.value.trim();
+btnSubmit.onclick = async () => {
+  const email = inputEmail.value.trim();
+  const pass = inputPass.value.trim();
+  const name = inputName.value.trim();
 
-    if (!email || !pass) {
-      alert("Please fill in email and password");
-      return;
-    }
+  if (!email || !pass) {
+    alert("Please fill in email and password");
+    return;
+  }
 
-    btnSubmit.innerText = "Processing...";
-    btnSubmit.style.opacity = "0.7";
-    btnSubmit.disabled = true;
+  btnSubmit.innerText = "Processing...";
+  btnSubmit.style.opacity = "0.7";
+  btnSubmit.disabled = true;
 
-    try {
-      if (isSignup) {
-        if (!name) {
-          alert("Please enter your name");
-          btnSubmit.innerText = "Sign Up";
-          btnSubmit.disabled = false;
-          btnSubmit.style.opacity = "1";
-          return;
-        }
-        const cred = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          pass
-        );
-        await updateProfile(cred.user, {
-          displayName: name,
-          photoURL: `https://api.dicebear.com/9.x/lorelei/svg?seed=${name}&backgroundColor=transparent`,
-        });
-      } else {
-        await signInWithEmailAndPassword(auth, email, pass);
+  try {
+    if (isSignup) {
+      if (!name) {
+        alert("Please enter your name");
+        btnSubmit.innerText = "Sign Up";
+        btnSubmit.disabled = false;
+        btnSubmit.style.opacity = "1";
+        return;
       }
-
-      window.location.href = "../home/index.html";
-    } catch (err) {
-      console.error(err);
-      alert("Error: " + err.message);
-    } finally {
-      btnSubmit.style.opacity = "1";
-      btnSubmit.disabled = false;
-      btnSubmit.innerText = isSignup ? "Sign Up" : "Log in";
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      await updateProfile(cred.user, {
+        displayName: name,
+        photoURL: `https://api.dicebear.com/9.x/lorelei/svg?seed=${name}&backgroundColor=transparent`,
+      });
+    } else {
+      await signInWithEmailAndPassword(auth, email, pass);
     }
-  };
-}
 
-// AUTH LISTENER
+    // REDIRECT AFTER SUCCESSFUL LOGIN/SIGNUP
+    window.location.href = "/public/home/index.html";
+
+  } catch (err) {
+    console.error(err);
+    alert("Error: " + err.message);
+  } finally {
+    btnSubmit.style.opacity = "1";
+    btnSubmit.disabled = false;
+    btnSubmit.innerText = isSignup ? "Sign Up" : "Log in";
+  }
+};
+
+// AUTH LISTENER (AUTO-REDIRECT IF ALREADY LOGGED IN)
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    window.location.href = "../home/index.html";
+    window.location.href = "/public/home/index.html";
   }
 });
