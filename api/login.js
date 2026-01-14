@@ -1,7 +1,11 @@
 // api/login.js
-//I will add my admin SDK after learning about it
 export default function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
   const firebaseConfig = {
+    // Reminder for me ---- In Vercel, replace these strings with process.env.YOUR_VARIABLE_NAME
     apiKey: process.env.FIREBASE_API_KEY || "AIzaSyAJH79UQl0rc96Qug0DKLevO4ZI_sn8Kno",
     authDomain: "edulinki.firebaseapp.com",
     projectId: "edulinki",
