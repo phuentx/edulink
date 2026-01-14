@@ -5,9 +5,4 @@
       "source": "/",
       "destination": "/login"
     },
-    {
-      "source": "/home",
-      "destination": "/public/home/index.html"
-    }
-  ]
 }
